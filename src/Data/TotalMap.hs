@@ -15,9 +15,10 @@
 
 module Data.TotalMap (TMap,(!),tabulate,trim) where
 
-import Data.Monoid (Monoid(..))
+--import Data.Monoid (Monoid(..))
 import Control.Applicative (Applicative(..),liftA2,(<$>))
 import Data.Maybe (fromMaybe)
+import Data.Semigroup (Monoid (..), Semigroup(..))
 
 import Data.Map (Map)
 import qualified Data.Map as M
@@ -68,6 +69,9 @@ instance Ord k => Applicative (TMap k) where
     tabulate (df dx)
              (M.keysSet mf `mappend` M.keysSet mx)
              ((!) fs <*> (!) xs)
+             
+instance Ord k => Semigroup (TMap k v) where
+    (TMap d x) <> (TMap _ y) = TMap d $ x <> y
 
 -- Note: I'd like to 'trim' the tabulate result in <*>, but doing so would
 -- require the Eq constraint on values, which breaks Applicative.
